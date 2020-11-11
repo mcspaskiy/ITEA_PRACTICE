@@ -9,49 +9,60 @@ import javafx.stage.Stage;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 
 public class Main extends Application {
+    public static final String PATH_INNER = "resources/readme.txt";
+    public static final String PATH_OUTER = "misc/readme.txt";
 
     public static void main(String[] args) {
         Application.launch();
     }
 
     @Override
-    public void start(Stage primaryStage) throws Exception {
-        URL url = this.getClass().getClassLoader().getResource("resources/readme.txt");
-        File file = new File("misc/readme.txt");
+    public void start(Stage primaryStage) {
+        String inner = loadFromInnerSource();
+        String outer = loadFromOuterSource();
+        initViews(primaryStage, inner, outer);
+        primaryStage.show();
+    }
 
-        Label labelInner = new Label();
-        Label labelOuter = new Label();
-
+    private void initViews(Stage primaryStage, String inner, String outer) {
+        Label labelInner = new Label(inner);
+        Label labelOuter = new Label(outer);
         VBox verticalLayout = new VBox(labelInner, labelOuter);
         verticalLayout.setAlignment(Pos.CENTER);
-
         Scene scene = new Scene(verticalLayout, 300, 100);
         primaryStage.setScene(scene);
-        primaryStage.show();
+    }
 
-        StringBuilder sb1 = new StringBuilder();
+    private String loadFromInnerSource() {
+        URL url = this.getClass().getClassLoader().getResource(PATH_INNER);
+        StringBuilder sbInner = new StringBuilder();
         try (InputStream inputStream = url.openStream()) {
             int i;
             while ((i = inputStream.read()) != -1) {
-                sb1.append((char) i);
+                sbInner.append((char) i);
             }
+        } catch (IOException e) {
+            e.printStackTrace();
         }
+        return sbInner.toString();
+    }
 
-
-        StringBuilder sb3 = new StringBuilder();
-        try (InputStream io = new FileInputStream(file.getAbsolutePath())) {
+    private String loadFromOuterSource() {
+        File file = new File(PATH_OUTER);
+        StringBuilder sbOuter = new StringBuilder();
+        try (InputStream io = new FileInputStream(file)) {
             int i;
             while ((i = io.read()) != -1) {
-                sb3.append((char) i);
+                sbOuter.append((char) i);
             }
+        } catch (IOException e) {
+            e.printStackTrace();
         }
-
-
-        labelInner.setText(sb1.toString());
-        labelOuter.setText(sb3.toString());
+        return sbOuter.toString();
     }
 }
