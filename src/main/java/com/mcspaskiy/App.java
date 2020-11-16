@@ -1,21 +1,24 @@
 package com.mcspaskiy;
 
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
+import java.sql.*;
+import java.time.LocalDateTime;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class App {
+    public static final String SQL_INSERT_ROW = "INSERT INTO APP_KEYS(APP_KEY, CREATED_DATE) VALUES(?,?)";
+    public static final String SQL_SELECT_ALL = "SELECT * FROM APP_KEYS";
+
+
     public static void main(String[] args) {
-        File file = new File("props/application.properties");
+        for (String arg : args) {
+            System.out.println("Key=" + arg);
+        }
+        //  File file = new File("props/application.properties");
         Path path = Paths.get("props/application.properties");
         String dbUrl = null;
         String dbUser = null;
@@ -34,10 +37,10 @@ public class App {
             e.printStackTrace();
         }
 
-        StringBuilder sb = new StringBuilder();
-      /*  try (InputStream inputStream = new FileInputStream(file);) {
+        //   StringBuilder sb = new StringBuilder();
+        /*  try (InputStream inputStream = new FileInputStream(file);) {
 
-           *//* int i;
+         *//* int i;
             while ((i = inputStream.read()) != -1 ) {
                 sb.append((char)i);
             }*//*
@@ -72,5 +75,28 @@ public class App {
             System.out.println("SQLState: " + ex.getSQLState());
             System.out.println("VendorError: " + ex.getErrorCode());
         }
+
+        try {
+            Statement statement = conn.createStatement();
+            PreparedStatement preparedStatement = conn.prepareStatement(SQL_INSERT_ROW);
+            preparedStatement.setString(1, "aaaaaa");
+            preparedStatement.setObject(2, LocalDateTime.now());
+            preparedStatement.execute();
+            preparedStatement.close();
+            ResultSet resultSet = statement.executeQuery(SQL_SELECT_ALL);
+            while (resultSet.next()) {
+                System.out.println("id=" + resultSet.getInt("id") + " app_key=" + resultSet.getString("app_key") + " created_date=" + resultSet.getObject("created_date"));
+            }
+            resultSet.close();
+            statement.close();
+            conn.close();
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+
+    }
+
+    public void insertKey(String key, LocalDateTime dateTime) {
+
     }
 }
