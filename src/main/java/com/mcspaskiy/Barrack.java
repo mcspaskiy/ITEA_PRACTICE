@@ -18,7 +18,7 @@ public class Barrack implements Runnable {
     private List<String> names = Arrays.asList(
             "Petya", "Kolya", "Vasya", "Kuso", "Nikolay Sergeevich", "Bruce", "Lotus",
             "Fisher", "Denis", "Maximus", "Sidorov", "Vova", "Charlie", "X-144.mod.v2",
-            "Anabel", "Ping");
+            "Anabel", "Ping", "Stuart", "Abdul");
 
     public Barrack(GoldMine goldMine) {
         this.thread = new Thread(this);
