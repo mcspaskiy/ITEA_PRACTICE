@@ -21,7 +21,7 @@ public class Worker implements Runnable {
     public void run() {
         while (true) {
             try {
-                TimeUnit.SECONDS.sleep(3);
+                TimeUnit.SECONDS.sleep(1);
                 int value = goldMine.getGold(productivity);
                 goldMined += value;
             } catch (InterruptedException e) {
