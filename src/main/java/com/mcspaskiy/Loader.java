@@ -1,26 +1,18 @@
 package com.mcspaskiy;
 
 public class Loader implements Runnable {
-    private int productivity = 3;
+    private static final int PRODUCTIVITY = 3;
     private Thread thread;
-    private Store store;
     private Cart cart;
 
-    public Loader(Store store, Cart cart) {
-        this.store = store;
+    public Loader(Cart cart) {
         this.cart = cart;
-        thread = new Thread(this);
+        this.thread = new Thread(this);
     }
 
     @Override
     public void run() {
-        synchronized (store) {
-            System.out.println("Loader is loading...");
-            cart.increaseCount(productivity);
-            store.decreaseCount(cart.getCurrentCargo());
-            System.out.println("Loader has finished load. Store: " + store.getCount() + " Cart: " + cart.getCurrentCargo());
-            System.out.println("Waiting for carrier...");
-        }
+        cart.load(PRODUCTIVITY);
     }
 
     public void startLoad() {
@@ -29,7 +21,7 @@ public class Loader implements Runnable {
 
     public void join() {
         try {
-            this.thread.join();
+            thread.join();
         } catch (InterruptedException e) {
             e.printStackTrace();
         }

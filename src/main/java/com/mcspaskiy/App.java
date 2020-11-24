@@ -25,16 +25,25 @@ public class App {
         //loader: 3 per sec
         //carrier: 5 sec for transport
         //unload: 2 per sec
-        System.out.println("Mission started");
+        System.out.println("Это выдуманная история и все персонажи вымышленные. Все совпадения не имеют отношения к рельной жизни.");
 
-        Store store = new Store();
+        //Store store = new Store();
         Cart cart = new Cart();
-
-        Loader loader = new Loader(store, cart);
+        //System.out.println(Thread.activeCount());
+        Loader loader = new Loader(cart);
         loader.startLoad();
 
-        
+        Carrier carrier = new Carrier(cart);
+        carrier.startTransportation();
+
+        UnLoader unLoader = new UnLoader(cart);
+        unLoader.startUnload();
+
+
         loader.join();
-        System.out.println("Mission completed");
+        carrier.join();
+        unLoader.join();
+
+        System.out.println("История успешно рассказана.");
     }
 }
