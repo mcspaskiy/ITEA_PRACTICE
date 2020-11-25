@@ -3,16 +3,16 @@ package com.mcspaskiy;
 public class UnLoader implements Runnable {
     private static final int PRODUCTIVITY = 2;
     private Thread thread;
-    private Cart cart;
+    private GarbageTruck garbageTruck;
 
-    public UnLoader(Cart cart) {
-        this.cart = cart;
+    public UnLoader(GarbageTruck garbageTruck) {
+        this.garbageTruck = garbageTruck;
         thread = new Thread(this);
     }
 
     @Override
     public void run() {
-        cart.unload(PRODUCTIVITY);
+        garbageTruck.unload(PRODUCTIVITY);
     }
 
     public void startUnload() {

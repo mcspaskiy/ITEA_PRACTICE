@@ -3,16 +3,16 @@ package com.mcspaskiy;
 public class Carrier implements Runnable {
     private static final int TRANSPORTATION_TIME = 5;
     private Thread thread;
-    private Cart cart;
+    private GarbageTruck garbageTruck;
 
-    public Carrier(Cart cart) {
-        this.cart = cart;
+    public Carrier(GarbageTruck garbageTruck) {
+        this.garbageTruck = garbageTruck;
         thread = new Thread(this);
     }
 
     @Override
     public void run() {
-        cart.move(TRANSPORTATION_TIME);
+        garbageTruck.move(TRANSPORTATION_TIME);
     }
 
     public void startTransportation() {

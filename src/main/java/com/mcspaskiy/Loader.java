@@ -3,16 +3,16 @@ package com.mcspaskiy;
 public class Loader implements Runnable {
     private static final int PRODUCTIVITY = 3;
     private Thread thread;
-    private Cart cart;
+    private GarbageTruck garbageTruck;
 
-    public Loader(Cart cart) {
-        this.cart = cart;
+    public Loader(GarbageTruck garbageTruck) {
+        this.garbageTruck = garbageTruck;
         this.thread = new Thread(this);
     }
 
     @Override
     public void run() {
-        cart.load(PRODUCTIVITY);
+        garbageTruck.load(PRODUCTIVITY);
     }
 
     public void startLoad() {

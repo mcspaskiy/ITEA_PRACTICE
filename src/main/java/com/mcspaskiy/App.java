@@ -1,8 +1,5 @@
 package com.mcspaskiy;
 
-/**
- * Hello world!
- */
 public class App {
     /**
      * Есть 3 рабочих,
@@ -13,37 +10,32 @@ public class App {
      * Когда тележка полн, транспортёр везёт 5 сек
      * Разгрузчик разгружает 2 кг/с
      * И транспортёр везёт (тоже 5 сек) телегу обратно грузчику.
-     * <p>
      * Нужны подробные логи, кто в данный момент работает, и кто кому что делегирует
-     * <p>
      * Потоки должны быть приостановлены, только 1 в единицу времени.
      */
 
     public static void main(String[] args) {
-        //store: 100 kg
-        //cart: 6 kg,
-        //loader: 3 per sec
-        //carrier: 5 sec for transport
-        //unload: 2 per sec
         System.out.println("Это выдуманная история и все персонажи вымышленные. Все совпадения не имеют отношения к рельной жизни.");
+        System.out.println("----------------------------------------");
+        GarbageTruck garbageTruck = new GarbageTruck();
 
-        //Store store = new Store();
-        Cart cart = new Cart();
-        //System.out.println(Thread.activeCount());
-        Loader loader = new Loader(cart);
+        Loader loader = new Loader(garbageTruck);
         loader.startLoad();
 
-        Carrier carrier = new Carrier(cart);
+        Carrier carrier = new Carrier(garbageTruck);
         carrier.startTransportation();
 
-        UnLoader unLoader = new UnLoader(cart);
+        UnLoader unLoader = new UnLoader(garbageTruck);
         unLoader.startUnload();
 
-
         loader.join();
+        System.out.println("Соковой уволился. Мусора в Кулькове больше нет.");
         carrier.join();
+        System.out.println("Перевозчик прекратил свою деятельность. Привез последнюю партию.");
         unLoader.join();
+        System.out.println("Яценюк уволился. Свалка заполнена.");
 
-        System.out.println("История успешно рассказана.");
+        System.out.println("----------------------------------------");
+        System.out.println("Конец.");
     }
 }
