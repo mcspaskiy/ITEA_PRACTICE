@@ -1,4 +1,4 @@
-package com.mcspaskiy;
+package com.mcspaskiy.simulation1;
 
 public enum Task {
     LOAD,

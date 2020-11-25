@@ -1,8 +1,8 @@
-package com.mcspaskiy;
+package com.mcspaskiy.simulation1;
 
 import java.util.concurrent.TimeUnit;
 
-import static com.mcspaskiy.Task.*;
+import static com.mcspaskiy.simulation1.Task.*;
 
 public class GarbageTruck {
     private static final int INITIAL_COUNT = 100;

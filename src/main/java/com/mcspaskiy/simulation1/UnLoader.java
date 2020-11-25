@@ -1,4 +1,4 @@
-package com.mcspaskiy;
+package com.mcspaskiy.simulation1;
 
 public class UnLoader implements Runnable {
     private static final int PRODUCTIVITY = 2;

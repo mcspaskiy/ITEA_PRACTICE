@@ -1,4 +1,4 @@
-package com.mcspaskiy;
+package com.mcspaskiy.simulation1;
 
 public class Carrier implements Runnable {
     private static final int TRANSPORTATION_TIME = 5;
