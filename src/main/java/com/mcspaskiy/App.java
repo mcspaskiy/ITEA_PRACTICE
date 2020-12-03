@@ -1,5 +1,8 @@
 package com.mcspaskiy;
 
+import com.mcspaskiy.catsandbox.CatFactory;
+import com.mcspaskiy.catsandbox.ForceMeatProducer;
+import com.mcspaskiy.catsandbox.cats.*;
 import org.xml.sax.SAXException;
 
 import javax.xml.parsers.ParserConfigurationException;
@@ -9,6 +12,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 /**
  * Hello world!
@@ -33,9 +37,47 @@ import java.util.List;
  */
 public class App {
     public static void main(String[] args) {
+        /**
+         * Start cats segment
+         */
         List<Class> classes = new ArrayList<>();
-        classes.add()
+        classes.add(AglyCat.class);
+        classes.add(BlackCat.class);
+        classes.add(Cat.class);
+        classes.add(FatCat.class);
+        classes.add(ThinCat.class);
 
+        CatFactory catFactory = new CatFactory();
+
+        List<Cuttable> caughtCats = new ArrayList<>();
+
+        Random random = new Random();
+        System.out.println("Hunting start");
+        for (int i = 0; i < 10; i++) {
+            Cuttable cat = catFactory.getCat(classes.get(random.nextInt(classes.size())));
+            System.out.println("Caught cat - " + cat.getClass().getSimpleName());
+            caughtCats.add(cat);
+        }
+        System.out.println("Hunting end");
+
+        ForceMeatProducer forcemeatProducer = new ForceMeatProducer();
+
+        System.out.println("Cat processing was started");
+        for (int i = caughtCats.size() - 1; i >= 0; i--) {
+            Cuttable cat = caughtCats.get(i);
+            boolean used = forcemeatProducer.produceForceMeat(cat);
+            if (used) {
+                caughtCats.remove(i);
+            }
+        }
+
+        String result = String.format("Cat processing was finished with result - %.2f\n", forcemeatProducer.getStoredMeat());
+        System.out.print(result);
+        System.out.println("Cats in list: " + caughtCats.size());
+        System.out.println("------------------------------------------");
+        /**
+         * End cats segment
+         */
 
         /**
          * Start document parsing segment
@@ -55,7 +97,5 @@ public class App {
         /**
          * End document parsing segment
          */
-
-
     }
 }
