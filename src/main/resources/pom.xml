@@ -9,7 +9,6 @@
   <version>1.0-SNAPSHOT</version>
 
   <name>ITEA_PRACTICE</name>
-  <!-- FIXME change it to the project's website -->
   <url>http://www.example.com</url>
 
   <properties>
@@ -19,7 +18,6 @@
   </properties>
 
   <dependencies>
-    <!-- https://mvnrepository.com/artifact/mysql/mysql-connector-java -->
     <dependency>
       <groupId>mysql</groupId>
       <artifactId>mysql-connector-java</artifactId>
@@ -51,8 +49,8 @@
         </configuration>
         <executions>
           <execution>
-            <id>make-assembly</id> <!-- this is used for inheritance merges -->
-            <phase>package</phase> <!-- bind to the packaging phase -->
+            <id>make-assembly</id>
+            <phase>package</phase>
             <goals>
               <goal>single</goal>
             </goals>
