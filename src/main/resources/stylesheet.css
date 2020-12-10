@@ -1,5 +1,6 @@
 .button {
-    -fx-font: 36px "Serif";
-    -fx-padding: 10;
-    -fx-background-color: #CCFF99;
+    -fx-font: 16px "Serif";
+    -fx-padding: 8;
+    -fx-background-color: #bfbfbf;
 }
+

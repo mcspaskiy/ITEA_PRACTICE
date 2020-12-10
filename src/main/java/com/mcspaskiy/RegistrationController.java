@@ -8,7 +8,6 @@ import javafx.scene.paint.Paint;
 
 import java.sql.Connection;
 
-
 public class RegistrationController {
     @FXML
     private TextField tfLogin;
@@ -19,12 +18,7 @@ public class RegistrationController {
     @FXML
     private Label lblResult;
 
-
     public void handleButtonAction(ActionEvent actionEvent) {
-        System.out.println("You clicked me!");
-        System.out.println(tfLogin.getText());
-        //DbService.getInstance().getConnection();
-
         //Read connection params
         DbConnectionParams dbConnectionParams = IOService.getInstance().readDbConnectionParams();
 
@@ -37,7 +31,7 @@ public class RegistrationController {
         if (result) {
             lblResult.setTextFill(Paint.valueOf("#319900"));
             lblResult.setText("Login successful");
-        }else {
+        } else {
             lblResult.setTextFill(Paint.valueOf("#ff6433"));
             lblResult.setText("Incorrect login or password");
         }

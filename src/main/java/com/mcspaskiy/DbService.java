@@ -10,7 +10,6 @@ public class DbService {
     private DbService() {
         try {
             Class.forName("com.mysql.cj.jdbc.Driver").newInstance();
-            System.out.println("Driver loaded");
         } catch (Exception e) {
             e.printStackTrace();
         }
