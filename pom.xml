@@ -64,7 +64,7 @@
             </descriptorRefs>
             <archive>
               <manifest>
-                <mainClass>com.mcspaskiy.App</mainClass>
+                <mainClass>com.mcspaskiy.GameLauncher</mainClass>
               </manifest>
             </archive>
           </configuration>
