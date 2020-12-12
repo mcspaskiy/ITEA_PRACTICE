@@ -2,21 +2,19 @@ package com.mcspaskiy;
 
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
-import com.badlogic.gdx.audio.Music;
-import com.badlogic.gdx.audio.Sound;
+import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.math.MathUtils;
-import com.badlogic.gdx.math.Rectangle;
-import com.badlogic.gdx.math.Vector3;
-import com.badlogic.gdx.utils.Array;
-import com.badlogic.gdx.utils.TimeUtils;
+import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.utils.viewport.FitViewport;
+import com.badlogic.gdx.utils.viewport.Viewport;
+import com.mcspaskiy.io.AssetHolder;
+import com.mcspaskiy.io.IOService;
+import com.mcspaskiy.model.Board;
+import com.mcspaskiy.model.Piece;
+import com.mcspaskiy.model.PieceType;
 
-import java.util.Iterator;
-
+import static com.mcspaskiy.model.PieceType.WHITE;
 import static com.mcspaskiy.utils.Constants.SCREEN_HEIGHT;
 import static com.mcspaskiy.utils.Constants.SCREEN_WITH;
 
@@ -24,28 +22,67 @@ import static com.mcspaskiy.utils.Constants.SCREEN_WITH;
  * @author Mikhail Spaskiy
  */
 public class TablutGame extends ApplicationAdapter {
-    private Texture dropImage;
+    //scene 2d begin
+    private Stage stage;
+    private Viewport viewport;
+    private AssetHolder assetHolder;
+
+
+    private Camera camera;
+    //scene 2d end
+
+  /*  private Texture dropImage;
     private Texture bucketImage;
+
+
     private Sound dropSound;
     private Music rainMusic;
-
     private OrthographicCamera camera;
     private SpriteBatch batch;
 
+
     private Rectangle bucket;
 
-    private Array<Rectangle> raindrops;
+    private Array<Rectangle> raindrops;*/
 
     private long lastDropTime;
 
+    public TablutGame() {
+
+    }
+
     @Override
     public void create() {
-        // Create camera
+        //loadAssets();
+        assetHolder = IOService.getInstance().getOrloadAssets();
+        //scene 2d begin
         camera = new OrthographicCamera();
-        camera.setToOrtho(false, SCREEN_WITH, SCREEN_HEIGHT);
+        viewport = new FitViewport(SCREEN_WITH, SCREEN_HEIGHT, camera);
+        stage = new Stage(viewport);
+        Gdx.input.setInputProcessor(stage);
+
+        // MyActor myActor1 = new MyActor(manager.get(AssetDescriptors.skeleton) , AssetDescriptors.skeleton.fileName);
+
+        Board board = new Board();
+        board.fillStage(stage);
+
+      //  stage.addActor(new Piece(IOService.getInstance().getOrloadAssets().getBlackPieceImage(), PieceType.BLACK));
+
+        //Piece piece = new Piece(assetHolder.getWhitePieceImage(), WHITE);
+
+        //piece.spritePos(0, 0);
+
+        //scene 2d end
+
+
+        // Create camera
+
+
+        // camera.setToOrtho(false, SCREEN_WITH, SCREEN_HEIGHT);
+
 
         // load the images for the droplet and the bucket, 64x64 pixels each
-        dropImage = new Texture(Gdx.files.internal("drop.png"));
+       /* dropImage = new Texture(Gdx.files.internal("drop.png"));
         bucketImage = new Texture(Gdx.files.internal("bucket.png"));
 
         // load the drop sound effect and the rain background "music"
@@ -66,10 +103,10 @@ public class TablutGame extends ApplicationAdapter {
         bucket.height = 64;
 
         raindrops = new Array<Rectangle>();
-        spawnRaindrop();
+        spawnRaindrop();*/
     }
 
-    private void spawnRaindrop() {
+   /* private void spawnRaindrop() {
         Rectangle raindrop = new Rectangle();
         raindrop.x = MathUtils.random(0, SCREEN_WITH - 64);
         raindrop.y = SCREEN_HEIGHT;
@@ -77,20 +114,31 @@ public class TablutGame extends ApplicationAdapter {
         raindrop.height = 64;
         raindrops.add(raindrop);
         lastDropTime = TimeUtils.nanoTime();
-    }
+    }*/
 
     @Override
     public void render() {
-        Gdx.gl.glClearColor(0, 0, 0.2f, 1);
+        //scene 2d begin
+        float delta = Gdx.graphics.getDeltaTime();
+        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+        stage.act(delta);
+        stage.getBatch().begin();
+        stage.getBatch().draw(assetHolder.getBoardImage(), 0, 0, SCREEN_WITH, SCREEN_HEIGHT);
+        stage.getBatch().end();
+        stage.draw();
+        //scene 2d end
+
+/*        Gdx.gl.glClearColor(0, 0, 0.2f, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         camera.update();
         //batch.setProjectionMatrix(camera.combined);
 
         batch.begin();
-        for (Rectangle raindrop : raindrops) {
+        batch.draw(boardImage, 0, 0);
+       *//* for (Rectangle raindrop : raindrops) {
             batch.draw(dropImage, raindrop.x, raindrop.y);
         }
-        batch.draw(bucketImage, bucket.x, bucket.y);
+        batch.draw(bucketImage, bucket.x, bucket.y);*//*
         batch.end();
 
         if (Gdx.input.isTouched()) {
@@ -117,15 +165,20 @@ public class TablutGame extends ApplicationAdapter {
                 dropSound.play();
                 iter.remove();
             }
-        }
+        }*/
     }
 
     @Override
     public void dispose() {
-        dropImage.dispose();
-        bucketImage.dispose();
-        dropSound.dispose();
-        rainMusic.dispose();
-        batch.dispose();
+        //scene 2d begin
+        IOService.getInstance().unloadAssets();
+        stage.dispose();
+        //scene 2d end
+
+        /**dropImage.dispose();
+         bucketImage.dispose();
+         dropSound.dispose();
+         rainMusic.dispose();
+         batch.dispose();*/
     }
 }

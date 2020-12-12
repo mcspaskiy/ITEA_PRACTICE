@@ -1,6 +1,9 @@
 package com.mcspaskiy.io;
 
 
+import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.assets.loaders.TextureLoader;
+import com.badlogic.gdx.graphics.Texture;
 import com.mcspaskiy.db.DbConnectionParams;
 
 import java.io.IOException;
@@ -17,6 +20,12 @@ import static com.mcspaskiy.utils.Constants.APPLICATION_PROPERTIES;
  */
 public class IOService {
     private static IOService instance;
+    private AssetManager assetManager;
+    private AssetHolder assetHolder;
+
+    private IOService() {
+        this.assetManager = new AssetManager();
+    }
 
     public static IOService getInstance() {
         if (instance == null) {
@@ -44,5 +53,35 @@ public class IOService {
         }
         DbConnectionParams dbConnectionParams = new DbConnectionParams(dbUrl, dbUser, dbPass);
         return dbConnectionParams;
+    }
+
+    public AssetHolder getOrloadAssets() {
+        if (assetHolder == null) {
+            assetHolder = new AssetHolder();
+            /* TextureLoader.TextureParameter param = new TextureLoader.TextureParameter();
+            param.minFilter = TextureFilter.Linear;
+            param.genMipMaps = true;*/
+            // boardImage = new Texture(Gdx.files.internal("images/board.png"));
+            //whitePieceImage = new Texture(Gdx.files.internal(("images/piece_white.png")));
+
+            assetManager.load("images/board.png", Texture.class);
+            assetManager.load("images/piece_white.png", Texture.class);
+            assetManager.load("images/piece_black.png", Texture.class);
+            assetManager.load("images/piece_white_king.png", Texture.class);
+            assetManager.load("images/possible_place.png", Texture.class);
+
+            //lock and make sure all assets are loaded
+            assetManager.finishLoading();
+            assetHolder.setBoardImage(assetManager.get("images/board.png", Texture.class));
+            assetHolder.setWhitePieceImage(assetManager.get("images/piece_white.png", Texture.class));
+            assetHolder.setBlackPieceImage(assetManager.get("images/piece_black.png", Texture.class));
+            assetHolder.setWhiteKingPieceImage(assetManager.get("images/piece_white_king.png", Texture.class));
+            assetHolder.setPossiblePlace(assetManager.get("images/possible_place.png", Texture.class));
+        }
+        return assetHolder;
+    }
+
+    public void unloadAssets() {
+        assetManager.dispose();
     }
 }
