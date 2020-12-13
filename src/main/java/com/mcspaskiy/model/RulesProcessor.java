@@ -1,7 +1,5 @@
 package com.mcspaskiy.model;
 
-import com.badlogic.gdx.Gdx;
-
 import java.util.List;
 
 public class RulesProcessor {
@@ -16,38 +14,40 @@ public class RulesProcessor {
         staticItemsOnBoard[4][4] = 1;
     }
 
-    public void processMovement(ItemType pieceType, int x, int y, ActiveItem[][] itemsOnBoard,
-                                List<ActiveItem> capturedWhitePieces, List<ActiveItem> capturedBlackPieces) {
+    public GameOverType processMovement(ItemType pieceType, int x, int y, ActiveItem[][] itemsOnBoard,
+                                        List<ActiveItem> capturedWhitePieces, List<ActiveItem> capturedBlackPieces) {
         //First step. Check King victory
         if (pieceType == ItemType.WHITE_KING) {
             for (int i = 0; i < staticItemsOnBoard.length; i++) {
                 for (int j = 0; j < staticItemsOnBoard.length; j++) {
                     if (staticItemsOnBoard[i][j] == 1 && x == i && y == j) {
-                        Gdx.app.log("WHITE WIN!", null);
+                        return GameOverType.WIN_WHITE_KING_FINISHED;
                     }
                 }
             }
         }
-        
+
+        GameOverType gameOverType = null;
         if (isEnemy(x - 1, y, pieceType, itemsOnBoard) && isFriend(x - 2, y, pieceType, itemsOnBoard)) {
-            capture(x - 1, y, itemsOnBoard, capturedBlackPieces, capturedWhitePieces);
+            gameOverType = capture(x - 1, y, itemsOnBoard, capturedBlackPieces, capturedWhitePieces);
         }
 
         if (isEnemy(x + 1, y, pieceType, itemsOnBoard) && isFriend(x + 2, y, pieceType, itemsOnBoard)) {
-            capture(x + 1, y, itemsOnBoard, capturedBlackPieces, capturedWhitePieces);
+            gameOverType = capture(x + 1, y, itemsOnBoard, capturedBlackPieces, capturedWhitePieces);
         }
 
         if (isEnemy(x, y - 1, pieceType, itemsOnBoard) && isFriend(x, y - 2, pieceType, itemsOnBoard)) {
-            capture(x, y - 1, itemsOnBoard, capturedBlackPieces, capturedWhitePieces);
+            gameOverType = capture(x, y - 1, itemsOnBoard, capturedBlackPieces, capturedWhitePieces);
         }
 
         if (isEnemy(x, y + 1, pieceType, itemsOnBoard) && isFriend(x, y + 2, pieceType, itemsOnBoard)) {
-            capture(x, y + 1, itemsOnBoard, capturedBlackPieces, capturedWhitePieces);
+            gameOverType = capture(x, y + 1, itemsOnBoard, capturedBlackPieces, capturedWhitePieces);
         }
+        return gameOverType;
     }
 
-    private void capture(int x, int y, ActiveItem[][] itemsOnBoard,
-                         List<ActiveItem> capturedBlackPieces, List<ActiveItem> capturedWhitePieces) {
+    private GameOverType capture(int x, int y, ActiveItem[][] itemsOnBoard,
+                                 List<ActiveItem> capturedBlackPieces, List<ActiveItem> capturedWhitePieces) {
         ActiveItem capturedPiece = itemsOnBoard[x][y];
         itemsOnBoard[x][y] = null;
         if (capturedPiece.getItemType() == ItemType.BLACK) {
@@ -55,6 +55,10 @@ public class RulesProcessor {
         } else if (capturedPiece.getItemType() == ItemType.WHITE) {
             captureWhitePiece(capturedWhitePieces, capturedPiece);
         }
+        if (capturedPiece.getItemType() == ItemType.WHITE_KING) {
+            return GameOverType.WIN_BLACK_KING_CAPTURED;
+        }
+        return null;
     }
 
     private boolean isEnemy(int x, int y, ItemType firstType, ActiveItem[][] itemsOnBoard) {

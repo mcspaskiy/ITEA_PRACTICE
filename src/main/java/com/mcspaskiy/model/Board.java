@@ -60,8 +60,8 @@ public class Board {
         putPieceOnBoard(ItemType.BLACK, 8, 5);
         putPieceOnBoard(ItemType.BLACK, 7, 4);
 
-        putPieceOnBoard(ItemType.WHITE, 3, 4);
-        putPieceOnBoard(ItemType.WHITE, 5, 4);
+        //   putPieceOnBoard(ItemType.WHITE, 3, 4);
+        // putPieceOnBoard(ItemType.WHITE, 5, 4);
         putPieceOnBoard(ItemType.WHITE, 4, 3);
         putPieceOnBoard(ItemType.WHITE, 4, 5);
 
@@ -161,7 +161,10 @@ public class Board {
      * It will be implemented after piece movement. If it's possible we will capture pieces
      */
     private void processMovement(ItemType pieceType, int x, int y) {
-        ruleProcessor.processMovement(pieceType, x, y, itemsOnBoard, capturedWhitePieces, capturedBlackPieces);
+        GameOverType gameOverType = ruleProcessor.processMovement(pieceType, x, y, itemsOnBoard, capturedWhitePieces, capturedBlackPieces);
+        if (gameOverType != null) {
+            Gdx.app.log("GAME OVER: ", gameOverType.toString());
+        }
     }
 
     private void clearAvailPositions() {
