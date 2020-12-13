@@ -152,17 +152,7 @@ public class Board {
             selectedPiece = piece;
 
             //We need to remove actors from the board view and clear list of items
-            for (Piece availPosition : availPositions) {
-                availPosition.addAction(Actions.removeActor());
-            }
-            for (int i = 0; i < piecesOnBoard.length; i++) {
-                for (int j = 0; j < piecesOnBoard.length; j++) {
-                    if (piecesOnBoard[i][j] != null && piecesOnBoard[i][j].getPieceType() == PieceType.AVAIL_POS) {
-                        piecesOnBoard[i][j] = null;
-                    }
-                }
-            }
-            availPositions.clear();
+            clearAvailPositions();
 
             //We select available position on the board
             int[] piecePos = getPiecePosition(piece);
@@ -215,6 +205,21 @@ public class Board {
             piecesOnBoard[newX][newY] = selectedPiece;
             selectedPiece.spritePos(newX, newY);
             selectedPiece = null;
+            clearAvailPositions();
         }
+    }
+
+    private void clearAvailPositions() {
+        for (Piece availPosition : availPositions) {
+            availPosition.addAction(Actions.removeActor());
+        }
+        for (int i = 0; i < piecesOnBoard.length; i++) {
+            for (int j = 0; j < piecesOnBoard.length; j++) {
+                if (piecesOnBoard[i][j] != null && piecesOnBoard[i][j].getPieceType() == PieceType.AVAIL_POS) {
+                    piecesOnBoard[i][j] = null;
+                }
+            }
+        }
+        availPositions.clear();
     }
 }
