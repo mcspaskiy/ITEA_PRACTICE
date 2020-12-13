@@ -12,7 +12,7 @@ import java.util.List;
 
 public class Board {
     private ActiveItem[][] itemsOnBoard;
-    private StaticItem[][] staticItemsOnBoard;
+
     private List<ActiveItem> availPositions;
     private Stage stage;
     private ActiveItem selectedPiece;
@@ -24,7 +24,7 @@ public class Board {
         ruleProcessor = new RulesProcessor();
         capturedWhitePieces = new ArrayList<>();
         capturedBlackPieces = new ArrayList<>();
-        this.staticItemsOnBoard = new StaticItem[9][9];
+
         this.stage = stage;
         this.availPositions = new ArrayList<>();
         this.itemsOnBoard = new ActiveItem[9][9];
@@ -66,12 +66,6 @@ public class Board {
         putPieceOnBoard(ItemType.WHITE, 4, 5);
 
         putPieceOnBoard(ItemType.WHITE_KING, 4, 4);
-
-        staticItemsOnBoard[0][0] = new StaticItem(0, 0);
-        staticItemsOnBoard[0][8] = new StaticItem(0, 8);
-        staticItemsOnBoard[8][8] = new StaticItem(8, 8);
-        staticItemsOnBoard[8][0] = new StaticItem(8, 0);
-        staticItemsOnBoard[4][4] = new StaticItem(4, 4);
     }
 
     /**
@@ -137,33 +131,13 @@ public class Board {
             int y = piecePos[1];
             System.out.println(x + ", " + y);
 
-            for (int i = x - 1; i >= 0; i--) {
-                ActiveItem anotherPiece = itemsOnBoard[i][y];
-                if (anotherPiece != null || staticItemsOnBoard[i][y] != null) {
-                    break;
+            int[][] availMovements = ruleProcessor.getAvailMovements(x, y, itemsOnBoard);
+            for (int i = 0; i < availMovements.length; i++) {
+                for (int j = 0; j < availMovements.length; j++) {
+                    if (availMovements[i][j] == 1) {
+                        putPieceOnBoard(ItemType.AVAIL_POS, i, j);
+                    }
                 }
-                putPieceOnBoard(ItemType.AVAIL_POS, i, y);
-            }
-            for (int i = x + 1; i < itemsOnBoard.length; i++) {
-                ActiveItem anotherPiece = itemsOnBoard[i][y];
-                if (anotherPiece != null || staticItemsOnBoard[i][y] != null) {
-                    break;
-                }
-                putPieceOnBoard(ItemType.AVAIL_POS, i, y);
-            }
-            for (int i = y - 1; i >= 0; i--) {
-                ActiveItem anotherPiece = itemsOnBoard[x][i];
-                if (anotherPiece != null || staticItemsOnBoard[x][i] != null) {
-                    break;
-                }
-                putPieceOnBoard(ItemType.AVAIL_POS, x, i);
-            }
-            for (int i = y + 1; i < itemsOnBoard.length; i++) {
-                ActiveItem anotherPiece = itemsOnBoard[x][i];
-                if (anotherPiece != null || staticItemsOnBoard[x][i] != null) {
-                    break;
-                }
-                putPieceOnBoard(ItemType.AVAIL_POS, x, i);
             }
         } else {
             //We here,  so we click on avail position. Movement implementation here.
