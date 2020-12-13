@@ -4,5 +4,6 @@ public enum PieceType {
     WHITE,
     WHITE_KING,
     BLACK,
-    AVAIL_POS;
+    AVAIL_POS,
+    CASTLE
 }

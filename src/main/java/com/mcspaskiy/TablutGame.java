@@ -11,10 +11,7 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 import com.mcspaskiy.io.AssetHolder;
 import com.mcspaskiy.io.IOService;
 import com.mcspaskiy.model.Board;
-import com.mcspaskiy.model.Piece;
-import com.mcspaskiy.model.PieceType;
 
-import static com.mcspaskiy.model.PieceType.WHITE;
 import static com.mcspaskiy.utils.Constants.SCREEN_HEIGHT;
 import static com.mcspaskiy.utils.Constants.SCREEN_WITH;
 

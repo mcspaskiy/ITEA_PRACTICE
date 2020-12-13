@@ -11,19 +11,20 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Board {
-    private Piece[][] piecesOnBoard;
-    private BoardElement[][] boardElementsOnBoard;
-    private List<Piece> availPositions;
+    private ActiveItem[][] piecesOnBoard;
+    private StaticItem[][] boardStaticElements;
+    private List<ActiveItem> availPositions;
     private Stage stage;
-    private Piece selectedPiece;
+    private ActiveItem selectedPiece;
     // private MovementProcessor movementProcessor;
 
 
     public Board(Stage stage) {
+        this.boardStaticElements = new StaticItem[9][9];
         this.stage = stage;
         this.availPositions = new ArrayList<>();
-        this.piecesOnBoard = new Piece[9][9];
-        this.boardElementsOnBoard = new BoardElement[9][9];
+        this.piecesOnBoard = new ActiveItem[9][9];
+        //this.boardElementsOnBoard = new BoardElement[9][9];
         //   this.movementProcessor = MovementProcessor.getInstance();
         resetBoard();
     }
@@ -60,6 +61,12 @@ public class Board {
         putPieceOnBoard(PieceType.WHITE, 4, 5);
 
         putPieceOnBoard(PieceType.WHITE_KING, 4, 4);
+
+        boardStaticElements[0][0] = new StaticItem(0, 0);
+        boardStaticElements[0][8] = new StaticItem(0, 8);
+        boardStaticElements[8][8] = new StaticItem(8, 8);
+        boardStaticElements[8][0] = new StaticItem(8, 0);
+        boardStaticElements[4][4] = new StaticItem(4, 4);
         //fillStage();
     }
 
@@ -82,8 +89,11 @@ public class Board {
             case AVAIL_POS:
                 texture = assets.getAvailPosImage();
                 break;
+            case CASTLE:
+                texture = null;
+                break;
         }
-        Piece piece = new Piece(texture, pieceType, x, y, this::onPieceClick);
+        ActiveItem piece = new ActiveItem(texture, pieceType, x, y, this::onPieceClick);
         piecesOnBoard[x][y] = piece;
         stage.addActor(piece);
 
@@ -95,7 +105,7 @@ public class Board {
     /**
      * Use to get X and Y relative position on board
      */
-    private int[] getPiecePosition(Piece piece) {
+    private int[] getPiecePosition(ActiveItem piece) {
         for (int i = 0; i < piecesOnBoard.length; i++) {
             for (int j = 0; j < piecesOnBoard.length; j++) {
                 if (piece.equals(piecesOnBoard[i][j])) {
@@ -146,7 +156,7 @@ public class Board {
     /**
      * Describes selection and movement behaviour
      */
-    private void onPieceClick(Piece piece) {
+    private void onPieceClick(ActiveItem piece) {
         Gdx.app.log("Touch down asset with name ", piece.getPieceType().toString());
         if (piece.getPieceType() != PieceType.AVAIL_POS) {
             selectedPiece = piece;
@@ -161,29 +171,29 @@ public class Board {
             System.out.println(x + ", " + y);
 
             for (int i = x - 1; i >= 0; i--) {
-                Piece anotherPiece = piecesOnBoard[i][y];
-                if (anotherPiece != null) {
+                ActiveItem anotherPiece = piecesOnBoard[i][y];
+                if (anotherPiece != null || boardStaticElements[i][y] != null) {
                     break;
                 }
                 putPieceOnBoard(PieceType.AVAIL_POS, i, y);
             }
             for (int i = x + 1; i < piecesOnBoard.length; i++) {
-                Piece anotherPiece = piecesOnBoard[i][y];
-                if (anotherPiece != null) {
+                ActiveItem anotherPiece = piecesOnBoard[i][y];
+                if (anotherPiece != null || boardStaticElements[i][y] != null) {
                     break;
                 }
                 putPieceOnBoard(PieceType.AVAIL_POS, i, y);
             }
             for (int i = y - 1; i >= 0; i--) {
-                Piece anotherPiece = piecesOnBoard[x][i];
-                if (anotherPiece != null) {
+                ActiveItem anotherPiece = piecesOnBoard[x][i];
+                if (anotherPiece != null || boardStaticElements[x][i] != null) {
                     break;
                 }
                 putPieceOnBoard(PieceType.AVAIL_POS, x, i);
             }
             for (int i = y + 1; i < piecesOnBoard.length; i++) {
-                Piece anotherPiece = piecesOnBoard[x][i];
-                if (anotherPiece != null) {
+                ActiveItem anotherPiece = piecesOnBoard[x][i];
+                if (anotherPiece != null || boardStaticElements[x][i] != null) {
                     break;
                 }
                 putPieceOnBoard(PieceType.AVAIL_POS, x, i);
@@ -210,7 +220,7 @@ public class Board {
     }
 
     private void clearAvailPositions() {
-        for (Piece availPosition : availPositions) {
+        for (ActiveItem availPosition : availPositions) {
             availPosition.addAction(Actions.removeActor());
         }
         for (int i = 0; i < piecesOnBoard.length; i++) {
