@@ -121,16 +121,13 @@ public class Board {
         Gdx.app.log("Touch down asset with name ", item.getItemType().toString());
         if (item.getItemType() != ItemType.AVAIL_POS) {
             selectedPiece = item;
-
             //We need to remove actors from the board view and clear list of items
             clearAvailPositions();
-
             //We select available position on the board
             int[] piecePos = getPiecePosition(item);
             int x = piecePos[0];
             int y = piecePos[1];
             System.out.println(x + ", " + y);
-
             int[][] availMovements = ruleProcessor.getAvailMovements(x, y, itemsOnBoard);
             for (int i = 0; i < availMovements.length; i++) {
                 for (int j = 0; j < availMovements.length; j++) {
@@ -141,7 +138,6 @@ public class Board {
             }
         } else {
             //We here,  so we click on avail position. Movement implementation here.
-
             //Receiving from position
             int[] piecePosPrev = getPiecePosition(selectedPiece);
             int prevX = piecePosPrev[0];
@@ -156,7 +152,7 @@ public class Board {
             itemsOnBoard[newX][newY] = selectedPiece;
             selectedPiece.spritePos(newX, newY);
             clearAvailPositions();
-            capturePieces(selectedPiece.getItemType(), newX, newY);
+            processMovement(selectedPiece.getItemType(), newX, newY);
             selectedPiece = null;
         }
     }
@@ -164,16 +160,8 @@ public class Board {
     /**
      * It will be implemented after piece movement. If it's possible we will capture pieces
      */
-    private void capturePieces(ItemType pieceType, int x, int y) {
-        /**
-         * Get new X,Y
-         * Get current piece type
-         * Get piece on x-1. If it enemy get piece at x-2. If it friend or static - capture
-         * Get piece on x+1. If it enemy get piece at x-2. If it friend or static - capture
-         * Get piece on y-1. If it enemy get piece at x-2. If it friend or static - capture
-         * Get piece on y+1. If it enemy get piece at x-2. If it friend or static - capture
-         */
-        ruleProcessor.checkMovementResult(pieceType, x, y, itemsOnBoard, capturedWhitePieces, capturedBlackPieces);
+    private void processMovement(ItemType pieceType, int x, int y) {
+        ruleProcessor.processMovement(pieceType, x, y, itemsOnBoard, capturedWhitePieces, capturedBlackPieces);
     }
 
     private void clearAvailPositions() {

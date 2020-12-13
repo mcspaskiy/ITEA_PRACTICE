@@ -1,21 +1,34 @@
 package com.mcspaskiy.model;
 
+import com.badlogic.gdx.Gdx;
+
 import java.util.List;
 
 public class RulesProcessor {
-    private StaticItem[][] staticItemsOnBoard;
+    private int[][] staticItemsOnBoard;
 
     public RulesProcessor() {
-        staticItemsOnBoard = new StaticItem[9][9];
-        staticItemsOnBoard[0][0] = new StaticItem(0, 0);
-        staticItemsOnBoard[0][8] = new StaticItem(0, 8);
-        staticItemsOnBoard[8][8] = new StaticItem(8, 8);
-        staticItemsOnBoard[8][0] = new StaticItem(8, 0);
-        staticItemsOnBoard[4][4] = new StaticItem(4, 4);
+        staticItemsOnBoard = new int[9][9];
+        staticItemsOnBoard[0][0] = 1;
+        staticItemsOnBoard[0][8] = 1;
+        staticItemsOnBoard[8][8] = 1;
+        staticItemsOnBoard[8][0] = 1;
+        staticItemsOnBoard[4][4] = 1;
     }
 
-    public void checkMovementResult(ItemType pieceType, int x, int y, ActiveItem[][] itemsOnBoard,
-                                    List<ActiveItem> capturedWhitePieces, List<ActiveItem> capturedBlackPieces) {
+    public void processMovement(ItemType pieceType, int x, int y, ActiveItem[][] itemsOnBoard,
+                                List<ActiveItem> capturedWhitePieces, List<ActiveItem> capturedBlackPieces) {
+        //First step. Check King victory
+        if (pieceType == ItemType.WHITE_KING) {
+            for (int i = 0; i < staticItemsOnBoard.length; i++) {
+                for (int j = 0; j < staticItemsOnBoard.length; j++) {
+                    if (staticItemsOnBoard[i][j] == 1 && x == i && y == j) {
+                        Gdx.app.log("WHITE WIN!", null);
+                    }
+                }
+            }
+        }
+        
         if (isEnemy(x - 1, y, pieceType, itemsOnBoard) && isFriend(x - 2, y, pieceType, itemsOnBoard)) {
             capture(x - 1, y, itemsOnBoard, capturedBlackPieces, capturedWhitePieces);
         }
@@ -89,39 +102,64 @@ public class RulesProcessor {
     }
 
     public int[][] getAvailMovements(int x, int y, ActiveItem[][] itemsOnBoard) {
+        ActiveItem piece = itemsOnBoard[x][y];
+        ItemType pieceType = piece.getItemType();
         int[][] availMovements = new int[9][9];
 
         for (int i = x - 1; i >= 0; i--) {
             ActiveItem anotherPiece = itemsOnBoard[i][y];
-            if (anotherPiece != null || staticItemsOnBoard[i][y] != null) {
+            if (anotherPiece != null || staticItemsOnBoard[i][y] == 1) {
+                if (i == 4 && y == 4) {
+                    continue;
+                }
+                if (pieceType == ItemType.WHITE_KING && staticItemsOnBoard[i][y] == 1) {
+                    availMovements[i][y] = 1;
+                }
                 break;
             }
             availMovements[i][y] = 1;
-            //putPieceOnBoard(ItemType.AVAIL_POS, i, y);
         }
+
         for (int i = x + 1; i < itemsOnBoard.length; i++) {
             ActiveItem anotherPiece = itemsOnBoard[i][y];
-            if (anotherPiece != null || staticItemsOnBoard[i][y] != null) {
+            if (anotherPiece != null || staticItemsOnBoard[i][y] == 1) {
+                if (i == 4 && y == 4) {
+                    continue;
+                }
+                if (pieceType == ItemType.WHITE_KING && staticItemsOnBoard[i][y] == 1) {
+                    availMovements[i][y] = 1;
+                }
                 break;
             }
             availMovements[i][y] = 1;
-            //putPieceOnBoard(ItemType.AVAIL_POS, i, y);
         }
+
         for (int i = y - 1; i >= 0; i--) {
             ActiveItem anotherPiece = itemsOnBoard[x][i];
-            if (anotherPiece != null || staticItemsOnBoard[x][i] != null) {
+            if (anotherPiece != null || staticItemsOnBoard[x][i] == 1) {
+                if (x == 4 && i == 4) {
+                    continue;
+                }
+                if (pieceType == ItemType.WHITE_KING && staticItemsOnBoard[x][i] == 1) {
+                    availMovements[x][i] = 1;
+                }
                 break;
             }
             availMovements[x][i] = 1;
-            //putPieceOnBoard(ItemType.AVAIL_POS, x, i);
         }
+
         for (int i = y + 1; i < itemsOnBoard.length; i++) {
             ActiveItem anotherPiece = itemsOnBoard[x][i];
-            if (anotherPiece != null || staticItemsOnBoard[x][i] != null) {
+            if (anotherPiece != null || staticItemsOnBoard[x][i] == 1) {
+                if (x == 4 && i == 4) {
+                    continue;
+                }
+                if (pieceType == ItemType.WHITE_KING && staticItemsOnBoard[x][i] == 1) {
+                    availMovements[x][i] = 1;
+                }
                 break;
             }
             availMovements[x][i] = 1;
-            //putPieceOnBoard(ItemType.AVAIL_POS, x, i);
         }
         return availMovements;
     }
