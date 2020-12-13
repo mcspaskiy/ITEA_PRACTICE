@@ -41,7 +41,7 @@ public class AssetHolder {
         this.blackPieceImage = blackPieceImage;
     }
 
-    public Texture getPossiblePlace() {
+    public Texture getAvailPosImage() {
         return possiblePlace;
     }
 

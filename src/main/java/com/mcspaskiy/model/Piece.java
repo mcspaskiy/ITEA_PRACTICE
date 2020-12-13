@@ -17,10 +17,8 @@ public class Piece extends Actor {
     private boolean onBoard;
     private static final int PIECE_SIZE = 55;
     private static final int CELL_SIZE = SCREEN_HEIGHT / 11;
-    // private OnPieceClickHandler eventHandler;
 
     public Piece(Texture texture, PieceType pieceType, int x, int y, OnPieceClickHandler eventHandler) {
-        // this.eventHandler = eventHandler;
         this.sprite = new Sprite(texture);
         sprite.setSize(PIECE_SIZE, PIECE_SIZE);
         this.pieceType = pieceType;

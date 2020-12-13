@@ -63,8 +63,7 @@ public class TablutGame extends ApplicationAdapter {
 
         // MyActor myActor1 = new MyActor(manager.get(AssetDescriptors.skeleton) , AssetDescriptors.skeleton.fileName);
 
-        Board board = new Board();
-        board.fillStage(stage);
+        Board board = new Board(stage);
 
       //  stage.addActor(new Piece(IOService.getInstance().getOrloadAssets().getBlackPieceImage(), PieceType.BLACK));
 
