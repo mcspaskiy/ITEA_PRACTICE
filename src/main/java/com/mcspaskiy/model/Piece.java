@@ -1,6 +1,5 @@
 package com.mcspaskiy.model;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.Sprite;
@@ -18,9 +17,10 @@ public class Piece extends Actor {
     private boolean onBoard;
     private static final int PIECE_SIZE = 55;
     private static final int CELL_SIZE = SCREEN_HEIGHT / 11;
+    // private OnPieceClickHandler eventHandler;
 
-
-    public Piece(Texture texture, PieceType pieceType, int x, int y) {
+    public Piece(Texture texture, PieceType pieceType, int x, int y, OnPieceClickHandler eventHandler) {
+        // this.eventHandler = eventHandler;
         this.sprite = new Sprite(texture);
         sprite.setSize(PIECE_SIZE, PIECE_SIZE);
         this.pieceType = pieceType;
@@ -30,16 +30,11 @@ public class Piece extends Actor {
         addListener(new InputListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                Gdx.app.log("Touch down asset with name ", pieceType.toString());
+                eventHandler.run(Piece.this);
                 return true;
             }
         });
     }
-
-    /*public void spritePos(float x, float y) {
-        sprite.setPosition(x, y);
-        setBounds(sprite.getX(), sprite.getY(), sprite.getWidth(), sprite.getHeight());
-    }*/
 
     public void spritePos(int x, int y) {
         float posX = (float) (SCREEN_WITH / 2 - PIECE_SIZE / 2 - 4 * CELL_SIZE + x * CELL_SIZE);
