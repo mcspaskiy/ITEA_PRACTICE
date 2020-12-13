@@ -1,9 +1,8 @@
 package com.mcspaskiy.model;
 
-public enum PieceType {
+public enum ItemType {
     WHITE,
     WHITE_KING,
     BLACK,
-    AVAIL_POS,
-    CASTLE
+    AVAIL_POS
 }

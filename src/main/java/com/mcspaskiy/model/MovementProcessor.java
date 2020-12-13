@@ -18,7 +18,7 @@ public class MovementProcessor {
         return instance;
     }
 
-    public void showMovementForPiece(int x, int y, PieceType pieceType) {
+    public void showMovementForPiece(int x, int y, ItemType pieceType) {
 
     }
 

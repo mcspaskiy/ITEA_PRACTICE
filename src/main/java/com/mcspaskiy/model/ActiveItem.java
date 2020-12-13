@@ -12,28 +12,27 @@ import static com.mcspaskiy.utils.Constants.SCREEN_HEIGHT;
 import static com.mcspaskiy.utils.Constants.SCREEN_WITH;
 
 public class ActiveItem extends Actor {
-    private PieceType pieceType;
+    private ItemType pieceType;
     private Sprite sprite;
-    private boolean onBoard;
+    private boolean alive;
     private static final int PIECE_SIZE = 55;
     private static final int CELL_SIZE = SCREEN_HEIGHT / 11;
 
-    public ActiveItem(Texture texture, PieceType pieceType, int x, int y, OnPieceClickHandler eventHandler) {
-        if (pieceType != PieceType.CASTLE) {
-            this.sprite = new Sprite(texture);
-            sprite.setSize(PIECE_SIZE, PIECE_SIZE);
-            this.pieceType = pieceType;
-            onBoard = true;
-            spritePos(x, y);
-            setTouchable(Touchable.enabled);
-            addListener(new InputListener() {
-                @Override
-                public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                    eventHandler.run(ActiveItem.this);
-                    return true;
-                }
-            });
-        }
+
+    public ActiveItem(Texture texture, ItemType pieceType, int x, int y, OnPieceClickHandler eventHandler) {
+        this.sprite = new Sprite(texture);
+        sprite.setSize(PIECE_SIZE, PIECE_SIZE);
+        this.pieceType = pieceType;
+        alive = true;
+        spritePos(x, y);
+        setTouchable(Touchable.enabled);
+        addListener(new InputListener() {
+            @Override
+            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+                eventHandler.run(ActiveItem.this);
+                return true;
+            }
+        });
     }
 
     public void spritePos(int x, int y) {
@@ -53,11 +52,20 @@ public class ActiveItem extends Actor {
         sprite.draw(batch);
     }
 
-    public PieceType getPieceType() {
+    public ItemType getItemType() {
         return pieceType;
     }
 
-    public void setPieceType(PieceType pieceType) {
+    public void setPieceType(ItemType pieceType) {
         this.pieceType = pieceType;
     }
+
+    public void setAlive(boolean value) {
+        this.alive = false;
+    }
+
+    public boolean isAlive() {
+        return alive;
+    }
+
 }
