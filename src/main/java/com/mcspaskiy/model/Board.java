@@ -20,9 +20,6 @@ public class Board {
     private List<ActiveItem> capturedBlackPieces;
     private RulesProcessor ruleProcessor;
 
-    // private MovementProcessor movementProcessor;
-
-
     public Board(Stage stage) {
         ruleProcessor = new RulesProcessor();
         capturedWhitePieces = new ArrayList<>();
@@ -31,18 +28,12 @@ public class Board {
         this.stage = stage;
         this.availPositions = new ArrayList<>();
         this.itemsOnBoard = new ActiveItem[9][9];
-        //this.boardElementsOnBoard = new BoardElement[9][9];
-        //   this.movementProcessor = MovementProcessor.getInstance();
         resetBoard();
     }
 
     public void resetBoard() {
-        // stage.clear();
         for (int i = 0; i < itemsOnBoard.length; i++) {
             for (int j = 0; j < itemsOnBoard.length; j++) {
-               /* if (itemsOnBoard[i][j] != null) {
-                    itemsOnBoard[i][j].addAction();
-                }*/
                 itemsOnBoard[i][j] = null;
             }
         }
@@ -81,7 +72,6 @@ public class Board {
         staticItemsOnBoard[8][8] = new StaticItem(8, 8);
         staticItemsOnBoard[8][0] = new StaticItem(8, 0);
         staticItemsOnBoard[4][4] = new StaticItem(4, 4);
-        //fillStage();
     }
 
     /**
@@ -126,43 +116,6 @@ public class Board {
         }
         throw new PieceNotFoundException("Incorrect piece on Board");
     }
-
-    /**
-     * Callback from click event on piece
-     */
-
-
-   /* private void putAvailPositionOnBoard(int x, int y) {
-        putPieceOnBoard(PieceType.AVAIL_POS, 4, 4);
-
-        //AssetHolder assets = IOService.getInstance().getOrloadAssets();
-        //Texture texture = assets.getPossiblePlace();
-       // AvailPosition availPosition = new AvailPosition(texture, PieceType.AVAIL_POS, x, y, this::onPieceClick);
-        availPositions.add(availPosition);
-        stage.addActor(availPosition);
-        //piecesOnBoard[x][y] =
-    }*/
-
-   /* private Piece getPieceByPosition(int x, int y) {
-        for (int i = 0; i < piecesOnBoard.length; i++) {
-            for (int j = 0; j < piecesOnBoard.length; j++) {
-                return piecesOnBoard[][]
-            }
-        }
-    }*/
-
-    /**
-     * Add all pieces to stage as actors. Once on start game
-     */
-/*    public void fillStage() {
-        for (int i = 0; i < piecesOnBoard.length; i++) {
-            for (int j = 0; j < piecesOnBoard.length; j++) {
-                if (piecesOnBoard[i][j] != null) {
-                    stage.addActor(piecesOnBoard[i][j]);
-                }
-            }
-        }
-    }*/
 
     /**
      * Describes selection and movement behaviour

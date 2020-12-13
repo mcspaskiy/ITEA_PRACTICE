@@ -5,7 +5,6 @@ import java.util.List;
 public class RulesProcessor {
     public void checkMovementResult(ItemType pieceType, int x, int y, ActiveItem[][] itemsOnBoard,
                                     List<ActiveItem> capturedWhitePieces, List<ActiveItem> capturedBlackPieces) {
-        //TODO: king can't capture the pieces
         if (isEnemy(x - 1, y, pieceType, itemsOnBoard) && isFriend(x - 2, y, pieceType, itemsOnBoard)) {
             capture(x - 1, y, itemsOnBoard, capturedBlackPieces, capturedWhitePieces);
         }
