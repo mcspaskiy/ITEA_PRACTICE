@@ -27,10 +27,62 @@ public class RulesProcessor {
             }
         }
 
+
         GameOverType gameOverType = null;
-        if (isEnemy(x - 1, y, pieceType, itemsOnBoard) && isFriend(x - 2, y, pieceType, itemsOnBoard)) {
-            gameOverType = capture(x - 1, y, itemsOnBoard, capturedBlackPieces, capturedWhitePieces);
+
+        //Corner conditions
+        if (x == 1 && y == 1) {
+            if (isEnemy(0, 1, pieceType, itemsOnBoard) && isFriend(0, 2, pieceType, itemsOnBoard)) {
+                gameOverType = capture(0, 1, itemsOnBoard, capturedBlackPieces, capturedWhitePieces);
+            }
+            if (isEnemy(1, 0, pieceType, itemsOnBoard) && isFriend(2, 0, pieceType, itemsOnBoard)) {
+                gameOverType = capture(1, 0, itemsOnBoard, capturedBlackPieces, capturedWhitePieces);
+            }
         }
+
+        if (x == 1 && y == 7) {
+            if (isEnemy(0, 7, pieceType, itemsOnBoard) && isFriend(0, 6, pieceType, itemsOnBoard)) {
+                gameOverType = capture(0, 7, itemsOnBoard, capturedBlackPieces, capturedWhitePieces);
+            }
+            if (isEnemy(1, 8, pieceType, itemsOnBoard) && isFriend(2, 8, pieceType, itemsOnBoard)) {
+                gameOverType = capture(1, 8, itemsOnBoard, capturedBlackPieces, capturedWhitePieces);
+            }
+        }
+
+        if (x == 7 && y == 7) {
+            if (isEnemy(7, 8, pieceType, itemsOnBoard) && isFriend(6, 8, pieceType, itemsOnBoard)) {
+                gameOverType = capture(7, 8, itemsOnBoard, capturedBlackPieces, capturedWhitePieces);
+            }
+            if (isEnemy(8, 7, pieceType, itemsOnBoard) && isFriend(8, 6, pieceType, itemsOnBoard)) {
+                gameOverType = capture(8, 7, itemsOnBoard, capturedBlackPieces, capturedWhitePieces);
+            }
+        }
+
+        if (x == 7 && y == 1) {
+            if (isEnemy(8, 1, pieceType, itemsOnBoard) && isFriend(8, 2, pieceType, itemsOnBoard)) {
+                gameOverType = capture(8, 1, itemsOnBoard, capturedBlackPieces, capturedWhitePieces);
+            }
+            if (isEnemy(7, 0, pieceType, itemsOnBoard) && isFriend(6, 0, pieceType, itemsOnBoard)) {
+                gameOverType = capture(7, 0, itemsOnBoard, capturedBlackPieces, capturedWhitePieces);
+            }
+        }
+
+
+        /*if (x == 1 && y == 1 &&)
+
+                isEnemy(1, 0, pieceType, itemsOnBoard) &&
+
+                isFriend(2, 0, pieceType, itemsOnBoard)) {
+            gameOverType = capture(1, 0, itemsOnBoard, capturedBlackPieces, capturedWhitePieces);
+        }
+*/
+
+        if (isEnemy(x - 1, y, pieceType, itemsOnBoard)) {
+            if (isFriend(x - 2, y, pieceType, itemsOnBoard)) {
+                gameOverType = capture(x - 1, y, itemsOnBoard, capturedBlackPieces, capturedWhitePieces);
+            }
+        }
+
 
         if (isEnemy(x + 1, y, pieceType, itemsOnBoard) && isFriend(x + 2, y, pieceType, itemsOnBoard)) {
             gameOverType = capture(x + 1, y, itemsOnBoard, capturedBlackPieces, capturedWhitePieces);
@@ -78,6 +130,20 @@ public class RulesProcessor {
     }
 
     private boolean isFriend(int x, int y, ItemType firstType, ActiveItem[][] itemsOnBoard) {
+        //Always friendly positions
+      /*  if ((x == -1 && y == 1)
+                || (x == 1 && y == -1)
+                || (x == -1 && y == 7)
+                || (x == 1 && y == 9)
+                || (x == 7 && y == 9)
+                || (x == 9 && y == 7)
+                || (x == 7 && y == -1)
+                || (x == 9 && y == 1)
+        ) {
+            itemsOnBoard[][]
+            return true;
+        }*/
+
         boolean step1 = x >= 0 && x <= itemsOnBoard.length - 1 && y >= 0 && y <= itemsOnBoard.length - 1 && itemsOnBoard[x][y] != null;
         if (step1 == false) {
             return false;

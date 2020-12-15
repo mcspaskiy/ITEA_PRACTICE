@@ -11,9 +11,9 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 import com.mcspaskiy.io.AssetHolder;
 import com.mcspaskiy.io.IOService;
 import com.mcspaskiy.model.Board;
+import com.mcspaskiy.multiplayer.GameClient;
 
-import static com.mcspaskiy.utils.Constants.SCREEN_HEIGHT;
-import static com.mcspaskiy.utils.Constants.SCREEN_WITH;
+import static com.mcspaskiy.utils.Constants.*;
 
 /**
  * @author Mikhail Spaskiy
@@ -31,102 +31,60 @@ import static com.mcspaskiy.utils.Constants.SCREEN_WITH;
  * * Белые выигрывают, когда Король достигает любой угловой «крепости» (в варианте с большим полем – до края доски). Простые фишки не имеют права заходить в «крепость», иначе играющий чёрными может четырьмя ходами заблокировать их и выиграть. К тому же, «крепость» может использоваться в качестве стены для зажатия фишки, поэтому для полной блокады требуется 4 фишки (всего 16). Теоретически, конечно, белые могут построить отдельную цитадель, закрыв Короля от атак и повторяя ходы внутри неё, но такое построение означает проигрыш, поскольку в ней нет выхода.
  */
 public class TablutGame extends ApplicationAdapter {
-    //scene 2d begin
     private Stage stage;
     private Viewport viewport;
     private AssetHolder assetHolder;
-
-
+    private String playerName;
+    private GameClient client;
     private Camera camera;
-    //scene 2d end
+    private Board board;
 
-  /*  private Texture dropImage;
-    private Texture bucketImage;
+    public TablutGame(String playerName, String ip) {
+        this.playerName = playerName;
+        client = new GameClient(playerName, ip, PORT);
+        client.execute(this::onReceiveResponse);
+    }
 
+    public void onMove(String command, String playerName, int prevX, int prevY, int newX, int newY) {
+        StringBuilder sb = new StringBuilder();
+        sb.append(command)
+                .append(" ")
+                .append(playerName)
+                .append(" ")
+                .append(prevX)
+                .append(" ")
+                .append(prevY)
+                .append(" ")
+                .append(newX)
+                .append(" ")
+                .append(newY);
+        client.processPlayerMovement(sb.toString());
+    }
 
-    private Sound dropSound;
-    private Music rainMusic;
-    private OrthographicCamera camera;
-    private SpriteBatch batch;
-
-
-    private Rectangle bucket;
-
-    private Array<Rectangle> raindrops;*/
-
-    private long lastDropTime;
-
-    public TablutGame() {
-
+    public void onReceiveResponse(String response) {
+        String[] splitted = response.split(" ");
+        if (splitted.length == 6) {
+            board.moveItemByCoords(Integer.valueOf(splitted[2]), Integer.valueOf(splitted[3]), Integer.valueOf(splitted[4]), Integer.valueOf(splitted[5]));
+        }
     }
 
     @Override
     public void create() {
         //loadAssets();
         assetHolder = IOService.getInstance().getOrloadAssets();
-        //scene 2d begin
         camera = new OrthographicCamera();
         viewport = new FitViewport(SCREEN_WITH, SCREEN_HEIGHT, camera);
         stage = new Stage(viewport);
         Gdx.input.setInputProcessor(stage);
+        board = new Board(stage, playerName, this::onMove);
 
-        // MyActor myActor1 = new MyActor(manager.get(AssetDescriptors.skeleton) , AssetDescriptors.skeleton.fileName);
-
-        Board board = new Board(stage);
-
-        //  stage.addActor(new Piece(IOService.getInstance().getOrloadAssets().getBlackPieceImage(), PieceType.BLACK));
-
-        //Piece piece = new Piece(assetHolder.getWhitePieceImage(), WHITE);
-
-        //piece.spritePos(0, 0);
-
-        //scene 2d end
-
-
-        // Create camera
-
-
-        // camera.setToOrtho(false, SCREEN_WITH, SCREEN_HEIGHT);
-
-
-        // load the images for the droplet and the bucket, 64x64 pixels each
-       /* dropImage = new Texture(Gdx.files.internal("drop.png"));
-        bucketImage = new Texture(Gdx.files.internal("bucket.png"));
-
-        // load the drop sound effect and the rain background "music"
-        //Gdx.files.internal();
-        dropSound = Gdx.audio.newSound(Gdx.files.internal("drop.wav"));
-        rainMusic = Gdx.audio.newMusic(Gdx.files.internal("rain.mp3"));
-
-        // start the playback of the background music immediately
-        rainMusic.setLooping(true);
-        rainMusic.play();
-
-        batch = new SpriteBatch();
-
-        bucket = new Rectangle();
-        bucket.x = SCREEN_WITH / 2 - 64 / 2;
-        bucket.y = 20;
-        bucket.width = 64;
-        bucket.height = 64;
-
-        raindrops = new Array<Rectangle>();
-        spawnRaindrop();*/
+        // rainMusic = Gdx.audio.newMusic(Gdx.files.internal("rain.mp3"));
+        // assetHolder.getMenuSound().setLooping(true);
+        //assetHolder.getMenuSound().play();
     }
-
-   /* private void spawnRaindrop() {
-        Rectangle raindrop = new Rectangle();
-        raindrop.x = MathUtils.random(0, SCREEN_WITH - 64);
-        raindrop.y = SCREEN_HEIGHT;
-        raindrop.width = 64;
-        raindrop.height = 64;
-        raindrops.add(raindrop);
-        lastDropTime = TimeUtils.nanoTime();
-    }*/
 
     @Override
     public void render() {
-        //scene 2d begin
         float delta = Gdx.graphics.getDeltaTime();
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         stage.act(delta);
@@ -134,54 +92,12 @@ public class TablutGame extends ApplicationAdapter {
         stage.getBatch().draw(assetHolder.getBoardImage(), 0, 0, SCREEN_WITH, SCREEN_HEIGHT);
         stage.getBatch().end();
         stage.draw();
-        //scene 2d end
-
-/*        Gdx.gl.glClearColor(0, 0, 0.2f, 1);
-        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-        camera.update();
-        //batch.setProjectionMatrix(camera.combined);
-
-        batch.begin();
-        batch.draw(boardImage, 0, 0);
-       *//* for (Rectangle raindrop : raindrops) {
-            batch.draw(dropImage, raindrop.x, raindrop.y);
-        }
-        batch.draw(bucketImage, bucket.x, bucket.y);*//*
-        batch.end();
-
-        if (Gdx.input.isTouched()) {
-            Vector3 touchPos = new Vector3();
-            touchPos.set(Gdx.input.getX(), Gdx.input.getY(), 0);
-            camera.unproject(touchPos);
-            bucket.x = touchPos.x - 64 / 2;
-        }
-
-        if (Gdx.input.isKeyPressed(Input.Keys.LEFT)) bucket.x -= 200 * Gdx.graphics.getDeltaTime();
-        if (Gdx.input.isKeyPressed(Input.Keys.RIGHT)) bucket.x += 200 * Gdx.graphics.getDeltaTime();
-
-        if (bucket.x < 0) bucket.x = 0;
-        if (bucket.x > SCREEN_WITH - 64) bucket.x = SCREEN_WITH - 64;
-
-        if (TimeUtils.nanoTime() - lastDropTime > 1000000000) spawnRaindrop();
-
-        for (Iterator<Rectangle> iter = raindrops.iterator(); iter.hasNext(); ) {
-            Rectangle raindrop = iter.next();
-            raindrop.y -= 200 * Gdx.graphics.getDeltaTime();
-            if (raindrop.y + 64 < 0) iter.remove();
-
-            if (raindrop.overlaps(bucket)) {
-                dropSound.play();
-                iter.remove();
-            }
-        }*/
     }
 
     @Override
     public void dispose() {
-        //scene 2d begin
         IOService.getInstance().unloadAssets();
         stage.dispose();
-        //scene 2d end
 
         /**dropImage.dispose();
          bucketImage.dispose();

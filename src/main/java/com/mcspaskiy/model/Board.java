@@ -6,6 +6,7 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.mcspaskiy.io.AssetHolder;
 import com.mcspaskiy.io.IOService;
+import com.mcspaskiy.multiplayer.Movable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,11 +20,15 @@ public class Board {
     private List<ActiveItem> capturedWhitePieces;
     private List<ActiveItem> capturedBlackPieces;
     private RulesProcessor ruleProcessor;
+    private String playerName;
+    private Movable movable;
 
-    public Board(Stage stage) {
+    public Board(Stage stage, String playerName, Movable movable) {
+        this.playerName = playerName;
         ruleProcessor = new RulesProcessor();
         capturedWhitePieces = new ArrayList<>();
         capturedBlackPieces = new ArrayList<>();
+        this.movable = movable;
 
         this.stage = stage;
         this.availPositions = new ArrayList<>();
@@ -137,6 +142,7 @@ public class Board {
                 }
             }
         } else {
+            //MOVEMENT
             //We here,  so we click on avail position. Movement implementation here.
             //Receiving from position
             int[] piecePosPrev = getPiecePosition(selectedPiece);
@@ -154,7 +160,22 @@ public class Board {
             clearAvailPositions();
             processMovement(selectedPiece.getItemType(), newX, newY);
             selectedPiece = null;
+
+            //  RoomService.getInstance().move("movement", playerName, prevX, prevY, newX, newY);
+
+            movable.run("movement", playerName, prevX, prevY, newX, newY);
         }
+    }
+
+    public void moveItemByCoords(int prevX, int prevY, int newX, int newY) {
+        selectedPiece = itemsOnBoard[prevX][prevY];
+        itemsOnBoard[prevX][prevY] = null;
+        itemsOnBoard[newX][newY] = selectedPiece;
+
+        selectedPiece.spritePos(newX, newY);
+
+        processMovement(selectedPiece.getItemType(), newX, newY);
+        selectedPiece = null;
     }
 
     /**

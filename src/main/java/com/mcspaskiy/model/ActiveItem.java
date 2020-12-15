@@ -15,7 +15,7 @@ public class ActiveItem extends Actor {
     private ItemType pieceType;
     private Sprite sprite;
     private boolean alive;
-    private static final int PIECE_SIZE = 55;
+    private static final int PIECE_SIZE = 55 / 2;
     private static final int CELL_SIZE = SCREEN_HEIGHT / 11;
 
 

@@ -1,5 +1,6 @@
 package com.mcspaskiy.io;
 
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.Texture;
 
 public class AssetHolder {
@@ -8,6 +9,7 @@ public class AssetHolder {
     private Texture whiteKingPieceImage;
     private Texture blackPieceImage;
     private Texture possiblePlace;
+    private Music menuSound;
 
     public Texture getBoardImage() {
         return boardImage;
@@ -47,5 +49,13 @@ public class AssetHolder {
 
     public void setPossiblePlace(Texture possiblePlace) {
         this.possiblePlace = possiblePlace;
+    }
+
+    public void setMenuSound(Music menuSound) {
+        this.menuSound = menuSound;
+    }
+
+    public Music getMenuSound() {
+        return menuSound;
     }
 }

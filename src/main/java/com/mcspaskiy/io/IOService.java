@@ -2,7 +2,7 @@ package com.mcspaskiy.io;
 
 
 import com.badlogic.gdx.assets.AssetManager;
-import com.badlogic.gdx.assets.loaders.TextureLoader;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.Texture;
 import com.mcspaskiy.db.DbConnectionParams;
 
@@ -33,6 +33,25 @@ public class IOService {
         }
         return instance;
     }
+
+    /*public void load() {
+        InputStream serviceAccount;
+
+        serviceAccount = getClass().getResourceAsStream("/serviceAccountKey.json");
+
+
+        FirebaseOptions options = null;
+        try {
+            options = new FirebaseOptions.Builder()
+                    .setCredentials(GoogleCredentials.fromStream(serviceAccount))
+                    .setDatabaseUrl("https://tablut-23048-default-rtdb.firebaseio.com")
+                    .build();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        FirebaseApp.initializeApp(options);
+    }*/
 
     public DbConnectionParams readDbConnectionParams() {
         Path path = Paths.get(APPLICATION_PROPERTIES);
@@ -77,6 +96,7 @@ public class IOService {
             assetHolder.setBlackPieceImage(assetManager.get("images/piece_black.png", Texture.class));
             assetHolder.setWhiteKingPieceImage(assetManager.get("images/piece_white_king.png", Texture.class));
             assetHolder.setPossiblePlace(assetManager.get("images/possible_place.png", Texture.class));
+          //  assetHolder.setMenuSound(assetManager.get("MenuMusic.wav", Music.class));
         }
         return assetHolder;
     }
@@ -84,4 +104,8 @@ public class IOService {
     public void unloadAssets() {
         assetManager.dispose();
     }
+
+  /*  public void loadAndr() {
+
+    }*/
 }
