@@ -8,15 +8,12 @@ import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
 
-import static com.mcspaskiy.utils.Constants.SCREEN_HEIGHT;
-import static com.mcspaskiy.utils.Constants.SCREEN_WITH;
+import static com.mcspaskiy.utils.Constants.*;
 
 public class ActiveItem extends Actor {
     private ItemType pieceType;
     private Sprite sprite;
     private boolean alive;
-    private static final int PIECE_SIZE = 55 / 2;
-    private static final int CELL_SIZE = SCREEN_HEIGHT / 11;
 
 
     public ActiveItem(Texture texture, ItemType pieceType, int x, int y, OnPieceClickHandler eventHandler) {

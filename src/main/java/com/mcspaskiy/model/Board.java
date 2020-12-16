@@ -22,17 +22,22 @@ public class Board {
     private RulesProcessor ruleProcessor;
     private String playerName;
     private Movable movable;
+    private int queue;
+    private boolean playerTurn;
 
-    public Board(Stage stage, String playerName, Movable movable) {
+    public Board(Stage stage, String playerName, int queue, Movable movable) {
+        if (queue == 0) {
+            playerTurn = true;
+        }
         this.playerName = playerName;
-        ruleProcessor = new RulesProcessor();
-        capturedWhitePieces = new ArrayList<>();
-        capturedBlackPieces = new ArrayList<>();
+        this.ruleProcessor = new RulesProcessor();
+        this.capturedWhitePieces = new ArrayList<>();
+        this.capturedBlackPieces = new ArrayList<>();
         this.movable = movable;
-
         this.stage = stage;
         this.availPositions = new ArrayList<>();
         this.itemsOnBoard = new ActiveItem[9][9];
+        this.queue = queue;
         resetBoard();
     }
 
@@ -65,8 +70,8 @@ public class Board {
         putPieceOnBoard(ItemType.BLACK, 8, 5);
         putPieceOnBoard(ItemType.BLACK, 7, 4);
 
-        //   putPieceOnBoard(ItemType.WHITE, 3, 4);
-        // putPieceOnBoard(ItemType.WHITE, 5, 4);
+        putPieceOnBoard(ItemType.WHITE, 3, 4);
+        putPieceOnBoard(ItemType.WHITE, 5, 4);
         putPieceOnBoard(ItemType.WHITE, 4, 3);
         putPieceOnBoard(ItemType.WHITE, 4, 5);
 
@@ -123,6 +128,15 @@ public class Board {
         if (!item.isAlive()) {
             return;
         }
+        if (queue == 0 && (item.getItemType() == ItemType.WHITE_KING || item.getItemType() == ItemType.WHITE)) {
+            return;
+        }
+        if (queue == 1 && item.getItemType() == ItemType.BLACK) {
+            return;
+        }
+        if (!playerTurn) {
+            return;
+        }
         Gdx.app.log("Touch down asset with name ", item.getItemType().toString());
         if (item.getItemType() != ItemType.AVAIL_POS) {
             selectedPiece = item;
@@ -143,7 +157,7 @@ public class Board {
             }
         } else {
             //MOVEMENT
-            //We here,  so we click on avail position. Movement implementation here.
+            //We here, so we click on avail position. Movement implementation here.
             //Receiving from position
             int[] piecePosPrev = getPiecePosition(selectedPiece);
             int prevX = piecePosPrev[0];
@@ -161,9 +175,8 @@ public class Board {
             processMovement(selectedPiece.getItemType(), newX, newY);
             selectedPiece = null;
 
-            //  RoomService.getInstance().move("movement", playerName, prevX, prevY, newX, newY);
-
-            movable.run("movement", playerName, prevX, prevY, newX, newY);
+            playerTurn = !playerTurn;
+            movable.run("movement", playerName, prevX, prevY, newX, newY, playerTurn);
         }
     }
 
@@ -171,9 +184,7 @@ public class Board {
         selectedPiece = itemsOnBoard[prevX][prevY];
         itemsOnBoard[prevX][prevY] = null;
         itemsOnBoard[newX][newY] = selectedPiece;
-
         selectedPiece.spritePos(newX, newY);
-
         processMovement(selectedPiece.getItemType(), newX, newY);
         selectedPiece = null;
     }

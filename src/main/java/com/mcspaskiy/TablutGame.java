@@ -3,9 +3,13 @@ package com.mcspaskiy;
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Camera;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.mcspaskiy.io.AssetHolder;
@@ -38,14 +42,29 @@ public class TablutGame extends ApplicationAdapter {
     private GameClient client;
     private Camera camera;
     private Board board;
+    private int queue;
+    private boolean playerTurn;
+    Label.LabelStyle label1Style;
+    Label label1;
+    private Color textColor = Color.BLACK;
+    private int textPosX;
 
     public TablutGame(String playerName, String ip) {
         this.playerName = playerName;
-        client = new GameClient(playerName, ip, PORT);
-        client.execute(this::onReceiveResponse);
+        this.client = new GameClient(playerName, ip, PORT);
+        this.client.execute(this::onReceiveResponse);
     }
 
-    public void onMove(String command, String playerName, int prevX, int prevY, int newX, int newY) {
+    public void onMove(String command, String playerName, int prevX, int prevY, int newX, int newY, boolean playerTurn) {
+        this.playerTurn = playerTurn;
+        if (playerTurn) {
+            playerName = playerName.replace("(Pls_wait)", "(You_Turn)");
+
+        } else {
+            playerName = playerName.replace("(You_Turn)", "(Pls_wait)");
+        }
+        label1.setText(playerName);
+
         StringBuilder sb = new StringBuilder();
         sb.append(command)
                 .append(" ")
@@ -62,25 +81,43 @@ public class TablutGame extends ApplicationAdapter {
     }
 
     public void onReceiveResponse(String response) {
-        String[] splitted = response.split(" ");
-        if (splitted.length == 6) {
-            board.moveItemByCoords(Integer.valueOf(splitted[2]), Integer.valueOf(splitted[3]), Integer.valueOf(splitted[4]), Integer.valueOf(splitted[5]));
+        String[] responseArray = response.split(" ");
+        if (responseArray.length == 6) {
+            board.moveItemByCoords(Integer.valueOf(responseArray[2]), Integer.valueOf(responseArray[3]),
+                    Integer.valueOf(responseArray[4]), Integer.valueOf(responseArray[5]));
+        } else {
+            queue = Integer.valueOf(responseArray[0]);
+            if (queue == 0) {
+                textColor = Color.BLACK;
+                textPosX = 8;
+                playerName += "(You_Turn)";
+                playerTurn = true;
+            } else {
+                textColor = Color.WHITE;
+                textPosX = SCREEN_WITH - 100;
+                playerTurn = false;
+            }
         }
     }
 
     @Override
     public void create() {
-        //loadAssets();
         assetHolder = IOService.getInstance().getOrloadAssets();
         camera = new OrthographicCamera();
         viewport = new FitViewport(SCREEN_WITH, SCREEN_HEIGHT, camera);
         stage = new Stage(viewport);
         Gdx.input.setInputProcessor(stage);
-        board = new Board(stage, playerName, this::onMove);
+        board = new Board(stage, playerName, queue, this::onMove);
 
-        // rainMusic = Gdx.audio.newMusic(Gdx.files.internal("rain.mp3"));
-        // assetHolder.getMenuSound().setLooping(true);
-        //assetHolder.getMenuSound().play();
+        label1Style = new Label.LabelStyle();
+        BitmapFont myFont = new BitmapFont(/*Gdx.files.internal("Forestside.ttf")*/);
+        label1Style.font = myFont;
+        label1Style.fontColor = textColor;
+        label1 = new Label(playerName, label1Style);
+        label1.setSize(200, 96);
+        label1.setPosition(textPosX, Gdx.graphics.getHeight() - 96);
+        label1.setAlignment(Align.center);
+        stage.addActor(label1);
     }
 
     @Override
@@ -98,11 +135,5 @@ public class TablutGame extends ApplicationAdapter {
     public void dispose() {
         IOService.getInstance().unloadAssets();
         stage.dispose();
-
-        /**dropImage.dispose();
-         bucketImage.dispose();
-         dropSound.dispose();
-         rainMusic.dispose();
-         batch.dispose();*/
     }
 }
