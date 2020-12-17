@@ -5,9 +5,8 @@ import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Texture;
 import com.mcspaskiy.db.DbConnectionParams;
 
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
+import java.io.InputStream;
+import java.net.URL;
 
 /**
  * @author Mikhail Spaskiy
@@ -31,21 +30,23 @@ public class IOService {
     }
 
     public DbConnectionParams readDbConnectionParams() {
-        String dbUrl = null;
-        String dbUser = null;
-        String dbPass = null;
-        try {
-            ClassLoader classLoader = getClass().getClassLoader();
-            File file = new File(classLoader.getResource("application.properties").getFile());
-            String[] values = new String(Files.readAllBytes(file.toPath())).split("\n");
-
-            dbUrl = values[0].replace("db.url=", "");
-            dbUser = values[1].replace("db.user=", "");
-            dbPass = values[2].replace("db.password=", "");
-            System.out.println("Connection params: " + "dbUrl = " + dbUrl + " dbUser = " + dbUser);
-        } catch (IOException e) {
+        URL resource = getClass().getClassLoader().getResource(APPLICATION_PROPERTIES);
+        StringBuilder sb = new StringBuilder();
+        try (InputStream inputStream = resource.openStream()) {
+            int c;
+            while ((c = inputStream.read()) != -1) {
+                sb.append((char) c);
+            }
+        } catch (Exception e) {
             e.printStackTrace();
         }
+
+        String[] values = sb.toString().split("\r\n");
+        String dbUrl = values[0].replace("db.url=", "");
+        String dbUser = values[1].replace("db.user=", "");
+        String dbPass = values[2].replace("db.password=", "");
+        System.out.println("Connection params: " + "dbUrl = " + dbUrl + " dbUser = " + dbUser);
+
         DbConnectionParams dbConnectionParams = new DbConnectionParams(dbUrl, dbUser, dbPass);
         return dbConnectionParams;
     }
