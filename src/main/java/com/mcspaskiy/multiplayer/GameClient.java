@@ -1,7 +1,5 @@
 package com.mcspaskiy.multiplayer;
 
-import com.mcspaskiy.model.ResponseReceiver;
-
 import java.io.IOException;
 import java.net.Socket;
 import java.net.UnknownHostException;
@@ -10,13 +8,10 @@ import java.net.UnknownHostException;
 public class GameClient {
     private String hostname;
     private int port;
-    private String userName;
     private String message;
-    private String response;
     private ResponseReceiver receiver;
 
-    public GameClient(String userName, String hostname, int port) {
-        this.userName = userName;
+    public GameClient(String hostname, int port) {
         this.hostname = hostname;
         this.port = port;
     }
@@ -26,10 +21,8 @@ public class GameClient {
         try {
             Socket socket = new Socket(hostname, port);
             System.out.println("Connected to the game server");
-            ReadThread readThread = new ReadThread(socket, this);
-            readThread.start();
-            WriteThread writeThread = new WriteThread(socket, this);
-            writeThread.start();
+            new ReadThread(socket, this).start();
+            new WriteThread(socket, this).start();
         } catch (UnknownHostException ex) {
             System.out.println("Server not found: " + ex.getMessage());
         } catch (IOException ex) {

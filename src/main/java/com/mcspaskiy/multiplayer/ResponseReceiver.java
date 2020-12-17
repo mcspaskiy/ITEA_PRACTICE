@@ -1,4 +1,4 @@
-package com.mcspaskiy.model;
+package com.mcspaskiy.multiplayer;
 
 @FunctionalInterface
 public interface ResponseReceiver {

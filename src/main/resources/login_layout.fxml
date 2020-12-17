@@ -8,7 +8,7 @@
 <?import javafx.scene.text.*?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane id="" prefHeight="200.0" prefWidth="380.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2" fx:controller="com.mcspaskiy.LoginController">
+<BorderPane id="" prefHeight="200.0" prefWidth="380.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2" fx:controller="com.mcspaskiy.controller.LoginController">
   <bottom>
     <HBox prefHeight="24.0" prefWidth="20048.0">
       <children>

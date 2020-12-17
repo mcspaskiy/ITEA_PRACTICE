@@ -1,7 +1,8 @@
-package com.mcspaskiy;
+package com.mcspaskiy.controller;
 
 import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
+import com.mcspaskiy.TablutGame;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;

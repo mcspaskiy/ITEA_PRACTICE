@@ -44,15 +44,16 @@ public class TablutGame extends ApplicationAdapter {
     private Board board;
     private int queue;
     private boolean playerTurn;
-    Label.LabelStyle label1Style;
-    Label label1;
+    private Label.LabelStyle label1Style;
+    private Label label1;
     private Color textColor = Color.BLACK;
     private int textPosX;
+    private boolean gameStarted;
 
     public TablutGame(String playerName, String ip) {
         this.playerName = playerName;
-        this.client = new GameClient(playerName, ip, PORT);
-        this.client.execute(this::onReceiveResponse);
+        this.client = new GameClient(ip, PORT);
+        this.client.execute(this::onReceiveResponseFromServer);
     }
 
     public void onMove(String command, String playerName, int prevX, int prevY, int newX, int newY, boolean playerTurn) {
@@ -66,10 +67,7 @@ public class TablutGame extends ApplicationAdapter {
         label1.setText(playerName);
 
         StringBuilder sb = new StringBuilder();
-        sb.append(command)
-                .append(" ")
-                .append(playerName)
-                .append(" ")
+        sb
                 .append(prevX)
                 .append(" ")
                 .append(prevY)
@@ -80,11 +78,19 @@ public class TablutGame extends ApplicationAdapter {
         client.processPlayerMovement(sb.toString());
     }
 
-    public void onReceiveResponse(String response) {
+    public void onReceiveResponseFromServer(String response) {
+        if ("start".equals(response)) {
+            gameStarted = true;
+            if (board != null) {
+                board.beginGame(true);
+            }
+            return;
+        }
+
         String[] responseArray = response.split(" ");
-        if (responseArray.length == 6) {
-            board.moveItemByCoords(Integer.valueOf(responseArray[2]), Integer.valueOf(responseArray[3]),
-                    Integer.valueOf(responseArray[4]), Integer.valueOf(responseArray[5]));
+        if (responseArray.length == 4) {
+            board.moveItemByCoords(Integer.valueOf(responseArray[0]), Integer.valueOf(responseArray[1]),
+                    Integer.valueOf(responseArray[2]), Integer.valueOf(responseArray[3]));
         } else {
             queue = Integer.valueOf(responseArray[0]);
             if (queue == 0) {
@@ -108,9 +114,9 @@ public class TablutGame extends ApplicationAdapter {
         stage = new Stage(viewport);
         Gdx.input.setInputProcessor(stage);
         board = new Board(stage, playerName, queue, this::onMove);
-
+        board.beginGame(gameStarted);
         label1Style = new Label.LabelStyle();
-        BitmapFont myFont = new BitmapFont(/*Gdx.files.internal("Forestside.ttf")*/);
+        BitmapFont myFont = new BitmapFont();
         label1Style.font = myFont;
         label1Style.fontColor = textColor;
         label1 = new Label(playerName, label1Style);

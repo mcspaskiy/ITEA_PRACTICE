@@ -24,6 +24,7 @@ public class Board {
     private Movable movable;
     private int queue;
     private boolean playerTurn;
+    private boolean gameStarted;
 
     public Board(Stage stage, String playerName, int queue, Movable movable) {
         if (queue == 0) {
@@ -125,6 +126,9 @@ public class Board {
      * Describes selection and movement behaviour
      */
     private void onItemClick(ActiveItem item) {
+        if (!gameStarted) {
+            return;
+        }
         if (!item.isAlive()) {
             return;
         }
@@ -174,7 +178,6 @@ public class Board {
             clearAvailPositions();
             processMovement(selectedPiece.getItemType(), newX, newY);
             selectedPiece = null;
-
             playerTurn = !playerTurn;
             movable.run("movement", playerName, prevX, prevY, newX, newY, playerTurn);
         }
@@ -187,6 +190,7 @@ public class Board {
         selectedPiece.spritePos(newX, newY);
         processMovement(selectedPiece.getItemType(), newX, newY);
         selectedPiece = null;
+        playerTurn = !playerTurn;
     }
 
     /**
@@ -211,5 +215,9 @@ public class Board {
             }
         }
         availPositions.clear();
+    }
+
+    public void beginGame(boolean gameStarted) {
+        this.gameStarted = gameStarted;
     }
 }
