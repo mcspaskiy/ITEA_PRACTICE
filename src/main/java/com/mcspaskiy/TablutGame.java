@@ -43,7 +43,7 @@ public class TablutGame extends ApplicationAdapter {
     private Camera camera;
     private Board board;
     private int queue;
-    private boolean playerTurn;
+    private boolean myTurn;
     private Label.LabelStyle label1Style;
     private Label label1;
     private Color textColor = Color.BLACK;
@@ -56,19 +56,20 @@ public class TablutGame extends ApplicationAdapter {
         this.client.execute(this::onReceiveResponseFromServer);
     }
 
-    public void onMove(String command, String playerName, int prevX, int prevY, int newX, int newY, boolean playerTurn) {
-        this.playerTurn = playerTurn;
-        if (playerTurn) {
-            playerName = playerName.replace("(Pls_wait)", "(You_Turn)");
-
+    private void updateTurnText() {
+        if (myTurn) {
+            label1.setText(playerName + " your turn...");
         } else {
-            playerName = playerName.replace("(You_Turn)", "(Pls_wait)");
+            label1.setText(playerName + " wait for opponent move...");
         }
-        label1.setText(playerName);
+    }
+
+    public void onPlayerMovePieceCallback(String command, String playerName, int prevX, int prevY, int newX, int newY, boolean playerTurn) {
+        this.myTurn = !this.myTurn;
+        updateTurnText();
 
         StringBuilder sb = new StringBuilder();
-        sb
-                .append(prevX)
+        sb.append(prevX)
                 .append(" ")
                 .append(prevY)
                 .append(" ")
@@ -83,6 +84,7 @@ public class TablutGame extends ApplicationAdapter {
             gameStarted = true;
             if (board != null) {
                 board.beginGame(true);
+                label1.setText(playerName + " your turn");
             }
             return;
         }
@@ -91,17 +93,18 @@ public class TablutGame extends ApplicationAdapter {
         if (responseArray.length == 4) {
             board.moveItemByCoords(Integer.valueOf(responseArray[0]), Integer.valueOf(responseArray[1]),
                     Integer.valueOf(responseArray[2]), Integer.valueOf(responseArray[3]));
+            myTurn = !myTurn;
+            updateTurnText();
         } else {
             queue = Integer.valueOf(responseArray[0]);
             if (queue == 0) {
                 textColor = Color.BLACK;
                 textPosX = 8;
-                playerName += "(You_Turn)";
-                playerTurn = true;
+                myTurn = true;
             } else {
                 textColor = Color.WHITE;
-                textPosX = SCREEN_WITH - 100;
-                playerTurn = false;
+                textPosX = (SCREEN_WITH - CELL_SIZE * 11) / 2 + CELL_SIZE * 11;
+                myTurn = false;
             }
         }
     }
@@ -113,16 +116,22 @@ public class TablutGame extends ApplicationAdapter {
         viewport = new FitViewport(SCREEN_WITH, SCREEN_HEIGHT, camera);
         stage = new Stage(viewport);
         Gdx.input.setInputProcessor(stage);
-        board = new Board(stage, playerName, queue, this::onMove);
+        board = new Board(stage, playerName, queue, this::onPlayerMovePieceCallback);
         board.beginGame(gameStarted);
         label1Style = new Label.LabelStyle();
         BitmapFont myFont = new BitmapFont();
         label1Style.font = myFont;
         label1Style.fontColor = textColor;
         label1 = new Label(playerName, label1Style);
-        label1.setSize(200, 96);
+        label1.setSize((SCREEN_WITH - CELL_SIZE * 11) / 2, 96);
         label1.setPosition(textPosX, Gdx.graphics.getHeight() - 96);
         label1.setAlignment(Align.center);
+
+        if (!myTurn) {
+            label1.setText(playerName + " waiting for opponent move...");
+        } else {
+            label1.setText(playerName + " waiting for opponent connect...");
+        }
         stage.addActor(label1);
     }
 
