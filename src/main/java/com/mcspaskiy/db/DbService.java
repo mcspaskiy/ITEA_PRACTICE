@@ -1,13 +1,17 @@
 package com.mcspaskiy.db;
 
-import java.sql.*;
-
-import static com.mcspaskiy.utils.Constants.SQL_CHECK_CREDENTIALS;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.time.LocalDateTime;
 
 /**
  * @author Mikhail Spaskiy
  */
 public class DbService {
+    public static final String SQL_INSERT_ROW = "INSERT INTO MOVEMENT_HISTORY(MOVEMENT, CREATED_DATE) VALUES(?,?)";
+
     private static DbService instance;
 
     private DbService() {
@@ -44,30 +48,15 @@ public class DbService {
         return conn;
     }
 
-    public boolean checkCredentials(Connection conn, String name, String pass) {
-        PreparedStatement statement = null;
-        ResultSet resultSet = null;
-        boolean result = false;
+    public void saveHistoryMovement(Connection conn, String movement) {
         try {
-            statement = conn.prepareStatement(SQL_CHECK_CREDENTIALS);
-            statement.setString(1, name);
-            statement.setString(2, pass);
-            resultSet = statement.executeQuery();
-            if (resultSet.next()) {
-                result = true;
-            } else {
-                result = false;
-            }
-        } catch (SQLException ex) {
-            ex.printStackTrace();
-        } finally {
-            try {
-                resultSet.close();
-                statement.close();
-            } catch (SQLException ex) {
-                ex.printStackTrace();
-            }
+            PreparedStatement preparedStatement = conn.prepareStatement(SQL_INSERT_ROW);
+                preparedStatement.setString(1, movement);
+                preparedStatement.setObject(2, LocalDateTime.now());
+                preparedStatement.execute();
+            preparedStatement.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
-        return result;
     }
 }

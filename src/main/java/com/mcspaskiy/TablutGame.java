@@ -12,10 +12,14 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
+import com.mcspaskiy.db.DbConnectionParams;
+import com.mcspaskiy.db.DbService;
 import com.mcspaskiy.io.AssetHolder;
 import com.mcspaskiy.io.IOService;
 import com.mcspaskiy.model.Board;
 import com.mcspaskiy.multiplayer.GameClient;
+
+import java.sql.Connection;
 
 import static com.mcspaskiy.utils.Constants.*;
 
@@ -49,14 +53,18 @@ public class TablutGame extends ApplicationAdapter {
     private Color textColor = Color.BLACK;
     private int textPosX;
     private boolean gameStarted;
+    private Connection connection;
 
     public TablutGame(String playerName, String ip) {
         this.playerName = playerName;
         this.client = new GameClient(ip, PORT);
         this.client.execute(this::onReceiveResponseFromServer);
+        DbConnectionParams dbConnectionParams = IOService.getInstance().readDbConnectionParams();
+        this.connection = DbService.getInstance().getConnection(dbConnectionParams);
     }
 
-    private void updateTurnText() {
+    private void updateTurnText(String msg) {
+        DbService.getInstance().saveHistoryMovement(connection, msg);
         if (myTurn) {
             label1.setText(playerName + " your turn...");
         } else {
@@ -66,7 +74,7 @@ public class TablutGame extends ApplicationAdapter {
 
     public void onPlayerMovePieceCallback(String command, String playerName, int prevX, int prevY, int newX, int newY, boolean playerTurn) {
         this.myTurn = !this.myTurn;
-        updateTurnText();
+        updateTurnText(prevX + " " + prevY + " " + newX + " " + newY);
 
         StringBuilder sb = new StringBuilder();
         sb.append(prevX)
@@ -94,7 +102,7 @@ public class TablutGame extends ApplicationAdapter {
             board.moveItemByCoords(Integer.valueOf(responseArray[0]), Integer.valueOf(responseArray[1]),
                     Integer.valueOf(responseArray[2]), Integer.valueOf(responseArray[3]));
             myTurn = !myTurn;
-            updateTurnText();
+            updateTurnText(response);
         } else {
             queue = Integer.valueOf(responseArray[0]);
             if (queue == 0) {
